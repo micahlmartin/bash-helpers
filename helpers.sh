@@ -3,12 +3,22 @@
 # Fetches a secret from Vault
 getSecret() {
   path="$1"
+
+  export VAULT_SKIP_VERIFY=$VAULT_SKIP_VERIFY
+  export VAULT_ADDR=$VAULT_ADDR
+  export VAULT_TOKEN=$VAULT_TOKEN
+
+  set +x
   vault kv get --format=json $path | jq '.data.data'
 }
 
 vaultLogin() {
   role_id="$1"
   secret_id="$2"
+  
+  export VAULT_ADDR=$VAULT_ADDR
+  export VAULT_SKIP_VERIFY=$VAULT_SKIPVERIFY
+
   vault write --format=json auth/approle/login role_id="${role_id}" secret_id="${secret_id}" | jq -r '.auth.client_token'
 }
 
