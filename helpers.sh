@@ -1,5 +1,25 @@
 #!/bin/bash
 
+# Tracks a list of variables that need to be exported to the .env file
+export exported_variables=()
+setVar() {
+    key=$1
+    val=$2
+    export "$key"="$val"
+    exported_variables+=("$key")
+}
+
+# export all of the variables in the array to the .env file
+writeEnv() {
+  # Iterate over the variable names in the array
+  for var in "${exported_variables[@]}"; do
+      # Get the value of the variable
+      value="${!var}"
+      # Write the variable assignment to the .env file
+      echo "export $var=\"$value\"" >> "$env_file"
+  done
+}
+
 # Define a Bash function to get the Docker registry based on deployment stage
 getDockerRegistry() {
     local deploymentStage="${1:-production}"
